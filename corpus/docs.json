@@ -1,0 +1,122 @@
+[
+  {
+    "id": "doc-01",
+    "title": "Irrigation on sandy loam",
+    "text": "Sandy loam drains quickly, so irrigation intervals should be shorter than on clay. A practical rule is to water when the top 10 cm of soil is dry and to avoid puddling. Drip lines beat overhead sprinklers on windy days because less water is lost to evaporation. Night irrigation reduces heat stress on leaves."
+  },
+  {
+    "id": "doc-02",
+    "title": "Clay soil water holding",
+    "text": "Clay holds water longer than sandy loam. Over-irrigation on clay causes root hypoxia and crusting. Use fewer, deeper irrigations and check soil with a probe at 20–30 cm. If the probe comes out muddy, skip the next cycle."
+  },
+  {
+    "id": "doc-03",
+    "title": "NDVI scouting windows",
+    "text": "NDVI from Sentinel-2 is most useful between stem elongation and early grain fill. Cloud cover above 30 percent makes a scene unusable. Compare the current NDVI map with the previous 14-day composite before sending a scout to a low-vigour polygon."
+  },
+  {
+    "id": "doc-04",
+    "title": "Cercospora leaf spot on beet",
+    "text": "Cercospora leaf spot on sugar beet starts as small grey spots with a reddish-brown border. Warm humid nights increase risk. Threshold for a fungicide pass is typically when spots appear on 5 percent of leaves in the mid-canopy, not at the first single lesion."
+  },
+  {
+    "id": "doc-05",
+    "title": "GPS tracker SK-12 install",
+    "text": "The GPS-tracker SK-12 must sit on a metal roof with a clear sky view. Do not place it under a plastic tarp. After power-on, wait until the LED blinks green twice before pairing it with the logistics module. Firmware below 2.4 drops positions in dense tree cover."
+  },
+  {
+    "id": "doc-06",
+    "title": "Harvest moisture for wheat",
+    "text": "Winter wheat is usually combined at 14–16 percent grain moisture. Above 18 percent, drying cost rises sharply. Below 12 percent, grain cracks in the cylinder. Sample three points per field, including a low spot, before calling the crew."
+  },
+  {
+    "id": "doc-07",
+    "title": "Barn humidity for grain",
+    "text": "Stored grain should stay below 14 percent moisture and barn air below 70 percent relative humidity. Run aeration fans when outside air is cooler and drier than the grain bulk. A hot spot above 25 C in the core is a reason to turn the pile."
+  },
+  {
+    "id": "doc-08",
+    "title": "Kit spare parts for planters",
+    "text": "Planter kits should include extra seed discs, closing-wheel bearings, and a 12 V test lamp. Do not wait until sowing day to order discs: lead time is often 10 days. Tag each kit with the planter serial number, not the farm name."
+  },
+  {
+    "id": "doc-09",
+    "title": "Crop rotation after sunflower",
+    "text": "Do not follow sunflower with sunflower or canola. A three-year gap reduces Sclerotinia pressure. Wheat or barley is a safer next crop than soybean on the same field. Record the previous two crops before approving a sowing plan."
+  },
+  {
+    "id": "doc-10",
+    "title": "Nitrogen split on winter wheat",
+    "text": "Split nitrogen on winter wheat: a small rate at tillering and the main rate at stem elongation. Applying everything at once on wet soils increases leaching. Do not apply urea on frozen ground. Tissue tests at GS32 help decide the second pass."
+  },
+  {
+    "id": "doc-11",
+    "title": "Scout photo quality rules",
+    "text": "Scout photos must include a scale object and GPS stamp. Blurry close-ups of leaves without a canopy shot are rejected. Take one wide shot of the polygon and two detail shots of the symptom. Upload the same day; delayed photos lose weather context."
+  },
+  {
+    "id": "doc-12",
+    "title": "Logistics slot for grain trucks",
+    "text": "Book a silo slot at least 6 hours before the truck leaves the field. Unbooked arrivals wait in a queue that can exceed 90 minutes. A truck without a moisture certificate is turned away at the gate. Share the SK-12 tracker id with dispatch."
+  },
+  {
+    "id": "doc-13",
+    "title": "Land cadastral buffer",
+    "text": "Do not spray inside a 20 m buffer of a cadastral watercourse. The land module marks these buffers in blue. If a spray order overlaps a buffer, the job is blocked until an agronomist signs a reduced-width pass."
+  },
+  {
+    "id": "doc-14",
+    "title": "Farm diesel night shift",
+    "text": "Night shift diesel issues require a second authorised signature. Tanks are sealed at 22:00. Any draw after that is logged as an exception and must name the machine id. Missing machine id is treated as a loss event."
+  },
+  {
+    "id": "doc-15",
+    "title": "Weather delay for spraying",
+    "text": "Cancel a spray if wind exceeds 5 m/s or rain is forecast within 2 hours. Inversion risk is highest 1 hour after sunset. Early morning after a clear night is safer than late evening for herbicides that drift."
+  },
+  {
+    "id": "doc-16",
+    "title": "Soybean inoculation",
+    "text": "Inoculate soybean seed if the field has not grown soybean for 4 years. Keep inoculant cool and apply within 6 hours of opening the pack. Do not mix with residual seed treatments that list 'incompatible with rhizobia' on the label."
+  },
+  {
+    "id": "doc-17",
+    "title": "Maize harvest drydown",
+    "text": "Maize in the field dries about 0.5–1.0 percent moisture per day in warm windy weather. Below 10 C, drydown almost stops. If grain is at 28 percent in late October, budget dryer time instead of waiting for field drydown."
+  },
+  {
+    "id": "doc-18",
+    "title": "ClickHouse reporting lag",
+    "text": "Operational reports in ClickHouse lag the PostgreSQL system of record by up to 15 minutes. Do not use analytics dashboards for gate decisions. For live truck moisture, read the operations API, not the warehouse."
+  },
+  {
+    "id": "doc-19",
+    "title": "Redis cache for field status",
+    "text": "Field status in Redis expires after 120 seconds. A stale 'in progress' flag after that window means the worker died. Recompute from PostgreSQL events, do not extend the TTL blindly."
+  },
+  {
+    "id": "doc-20",
+    "title": "Kafka harvest events",
+    "text": "Harvest load events go to Kafka topic harvest.loads.v1. Consumers must be idempotent on load_id. Duplicate publishes happen when a truck retries after a radio drop. Never increment tonnage twice for the same load_id."
+  },
+  {
+    "id": "doc-21",
+    "title": "RabbitMQ scout jobs",
+    "text": "Scout job dispatch uses RabbitMQ with a 5-minute visibility timeout. If a scout app does not ack, the job requeues. Manual 'done' in the UI without an ack still leaves a poison message — purge only after checking the job id."
+  },
+  {
+    "id": "doc-22",
+    "title": "Azure blob for scout images",
+    "text": "Scout images live in Azure Blob with a 90-day hot tier, then cool. Do not store originals on the mobile device after a successful 201 from the upload API. Thumbnails are generated asynchronously; the UI may show a placeholder for a few minutes."
+  },
+  {
+    "id": "doc-23",
+    "title": "OpenAI structured spray advice",
+    "text": "When the recommendation service calls an LLM, it must request JSON with fields: action, product_class, confidence, citations. Free-text advice is discarded. Tool calling may read field weather and Cercospora risk, but it must not place a spray order."
+  },
+  {
+    "id": "doc-24",
+    "title": "Hybrid search vs keyword",
+    "text": "Keyword search misses paraphrases such as 'when to water light soil' versus 'irrigation on sandy loam'. Vector search misses exact tokens such as GPS-tracker SK-12 and Cercospora. Hybrid BM25 plus kNN is the default retriever for the knowledge base."
+  }
+]
