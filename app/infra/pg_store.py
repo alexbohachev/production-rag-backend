@@ -92,7 +92,11 @@ class PgStore(KnowledgeStore):
         async with self.engine.connect() as conn:
             result = await conn.execute(
                 text(
-                    "SELECT id, doc_id, title, text, embedding::text FROM chunks WHERE id = ANY(:ids)"
+                    """
+                    SELECT id, doc_id, title, text, embedding::text
+                    FROM chunks
+                    WHERE id = ANY(CAST(:ids AS text[]))
+                    """
                 ),
                 {"ids": list(ids)},
             )
@@ -106,6 +110,7 @@ class PgStore(KnowledgeStore):
             return int(result.scalar_one())
 
     async def bm25_ids(self, query: str, k: int) -> list[str]:
+        """Lexical retrieval via Postgres FTS (tsvector / ts_rank_cd), not Okapi BM25."""
         async with self.engine.connect() as conn:
             result = await conn.execute(
                 text(

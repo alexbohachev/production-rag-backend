@@ -11,7 +11,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from app.api.deps import container
+from app.api.deps import configure_runtime, container
 from app.api.routes import router
 from app.config import get_settings
 from app.embeddings import get_embedder
@@ -20,6 +20,13 @@ from app.schemas import IngestDocument
 from app.services.ingest import IngestService
 
 logger = logging.getLogger(__name__)
+
+OPENAPI_TAGS = [
+    {"name": "query", "description": "Hybrid retrieval and grounded answers"},
+    {"name": "ingest", "description": "Document upsert with optional Idempotency-Key"},
+    {"name": "eval", "description": "Synthetic Recall@1 / Recall@5 protocol"},
+    {"name": "ops", "description": "Health, readiness, metrics, meta"},
+]
 
 
 class RequestIdMiddleware(BaseHTTPMiddleware):
@@ -35,10 +42,12 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
 async def lifespan(app: FastAPI):
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     settings = get_settings()
+    configure_runtime(settings)
     if settings.database_url:
         store = PgStore(settings.database_url)
         await store.init()
         container.store = store
+        container.store_backend = "postgres"
         logger.info("using postgres store")
     seed_file = Path(__file__).resolve().parents[1] / "corpus" / "docs.json"
     if seed_file.exists():
@@ -53,7 +62,13 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="Production RAG Backend",
         version="0.1.0",
-        summary="Hybrid retrieval API with auth, cache, metrics, and structured answers.",
+        summary="Hybrid retrieval HTTP API: BM25 ∥ vector → RRF → rerank → grounded citations.",
+        description=(
+            "Auth via `X-API-Key`. Optional `Idempotency-Key` on ingest. "
+            "Set `DATABASE_URL` for Postgres/pgvector and `REDIS_URL` for cache + idempotency. "
+            "Interactive docs: `/docs`."
+        ),
+        openapi_tags=OPENAPI_TAGS,
         lifespan=lifespan,
     )
     app.add_middleware(RequestIdMiddleware)
