@@ -36,6 +36,22 @@ class PgStore(KnowledgeStore):
                     """
                 )
             )
+            await conn.execute(
+                text(
+                    """
+                    CREATE INDEX IF NOT EXISTS chunks_fts_idx
+                    ON chunks USING GIN (to_tsvector('english', title || ' ' || text))
+                    """
+                )
+            )
+            await conn.execute(
+                text(
+                    """
+                    CREATE INDEX IF NOT EXISTS chunks_embedding_hnsw
+                    ON chunks USING hnsw (embedding vector_cosine_ops)
+                    """
+                )
+            )
 
     async def upsert(self, chunks: list[Chunk]) -> int:
         async with self.engine.begin() as conn:

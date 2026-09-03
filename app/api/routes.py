@@ -9,6 +9,7 @@ from app.api.deps import api_key, container, embedder_dep, query_service, settin
 from app.config import Settings
 from app.domain.ports import KnowledgeStore
 from app.embeddings import Embedder
+from app.rerank import get_reranker
 from app.schemas import IngestRequest, QueryRequest, QueryResponse
 from app.services.ingest import IngestService
 from app.services.query import QueryService
@@ -80,8 +81,8 @@ async def recall_at_5(
     report = await service.evaluate(labels)
     report["corpus"] = "synthetic-ops"
     report["note"] = (
-        "This corpus is synthetic. AgriChain production Recall@5 is 72% vector -> 88% hybrid "
-        "on 150 internal queries and is not stored here."
+        "Synthetic labeled set only. Numbers here are not AgriChain production metrics. "
+        "See eval/README.md for the private 150-query protocol note."
     )
     return report
 
@@ -95,5 +96,6 @@ async def meta(
     return {
         "service": settings.app_name,
         "embedding": embedder.backend,
-        "rerank": settings.rerank_backend,
+        "rerank": get_reranker().backend,
+        "rerank_configured": settings.rerank_backend,
     }

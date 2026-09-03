@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import logging
 from functools import lru_cache
 
 import numpy as np
@@ -5,6 +8,7 @@ import numpy as np
 from app.config import get_settings
 from app.domain.ranking import Chunk, feature_rerank
 
+logger = logging.getLogger(__name__)
 CROSS_ENCODER_NAME = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
 
@@ -18,6 +22,7 @@ class Reranker:
 
                 self._ce = CrossEncoder(CROSS_ENCODER_NAME)
             except Exception:
+                logger.exception("cross-encoder failed to load; falling back to feature rerank")
                 self.backend = "feature"
                 self._ce = None
 

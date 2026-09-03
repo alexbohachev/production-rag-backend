@@ -1,37 +1,52 @@
 # Production RAG Backend
 
-Hybrid retrieval HTTP service: **auth, hybrid search, feature or cross-encoder rerank, grounded citations, cache, metrics, Docker, CI**.
+[![CI](https://github.com/alexbohachev/production-rag-backend/actions/workflows/ci.yml/badge.svg)](https://github.com/alexbohachev/production-rag-backend/actions/workflows/ci.yml)
+![Python 3.12](https://img.shields.io/badge/python-3.12-blue)
+![License MIT](https://img.shields.io/badge/license-MIT-green)
 
-Synthetic ops corpus. **Not AgriChain source.** Production AgriChain RAG uses Elasticsearch; this repo is the public backend shape (Postgres/pgvector or in-memory).
+Hybrid retrieval HTTP service: auth, BM25 ∥ vector, RRF, feature or MiniLM cross-encoder rerank, grounded citations, Redis cache, Prometheus, Docker, CI.
+
+Synthetic ops corpus. **Not AgriChain source.** Production AgriChain uses Elasticsearch; this repo is the public backend shape (Postgres/pgvector or in-memory).
 
 ## Architecture
 
+```mermaid
+flowchart LR
+  API["POST /v1/query"] --> QS[QueryService]
+  QS --> BM25["store.bm25_ids\nSQL tsvector"]
+  QS --> VEC["store.vector_ids\nSQL <=> "]
+  BM25 --> RRF[RRF fuse in Python]
+  VEC --> RRF
+  RRF --> RR["rerank\nfeature | cross-encoder"]
+  RR --> ANS[grounded answer + citations]
+  QS --> CACHE[(Redis / memory fail-open)]
 ```
-API → QueryService → store.bm25_ids ∥ store.vector_ids (SQL when Postgres)
-                 → RRF → rerank (feature overlap+cosine, or MiniLM cross-encoder)
-                 → grounded answer + citations
-                 ↘ Redis/memory cache (fail-open)
-```
 
-`GET /v1/eval/recall-at-5` runs Recall@1 and Recall@5 on **this synthetic labeled set**. Numbers here are not AgriChain. Production AgriChain: 72% vector → 88% hybrid on 150 internal queries (`eval/README.md`).
+SQL retrieves candidates; RRF + rerank stay in Python (honest hybrid split for interviews).
 
-`RERANK_BACKEND=feature` in tests/CI. Local MiniLM: `RERANK_BACKEND=cross_encoder` plus `requirements-ml.txt`.
-
-`Idempotency-Key` on `POST /v1/documents` replays the first result.
-
-## Tests
+## Quick start
 
 ```bash
 pip install -r requirements-dev.txt
 pytest -q
-```
-
-## Run
-
-```bash
-pip install -r requirements.txt -r requirements-ml.txt
-copy .env.example .env
 uvicorn app.main:app --reload
 ```
 
-Дивись **STUDY.md** — як розібрати BM25 vs vector vs hybrid.
+```bash
+curl -s localhost:8000/health
+curl -s -H "X-API-Key: dev-key" -H "Content-Type: application/json" \
+  -d '{"query":"Where to mount GPS-tracker SK-12?","top_k":3,"include_trace":true}' \
+  localhost:8000/v1/query
+curl -s -H "X-API-Key: dev-key" localhost:8000/v1/eval/recall-at-5
+curl -s -H "X-API-Key: dev-key" localhost:8000/v1/meta
+```
+
+Local MiniLM embeddings + cross-encoder: `pip install -r requirements-ml.txt` and set `EMBEDDING_BACKEND=minilm`, `RERANK_BACKEND=cross_encoder`. CI/Docker stay on `hash` + `feature`.
+
+## Eval (synthetic only)
+
+`GET /v1/eval/recall-at-5` returns `recall_at_1` and `recall_at_5` on **this** labeled set. Those numbers are not AgriChain. Private production note: `eval/README.md`.
+
+`Idempotency-Key` on `POST /v1/documents` replays the first result.
+
+Дивись **STUDY.md** — BM25 vs vector vs hybrid українською.

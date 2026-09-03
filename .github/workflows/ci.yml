@@ -20,3 +20,4 @@ jobs:
         env:
           EMBEDDING_BACKEND: hash
           RERANK_BACKEND: feature
+      - run: docker build -t production-rag-backend:ci .

@@ -49,7 +49,8 @@ class QueryService:
         fused = rrf_fuse(bm25_ids, vector_ids)[:retrieve_k]
         fused_chunks = await self.store.get_many(fused)
         reranker = get_reranker()
-        reranked = reranker.rerank(query, fused_chunks, query_vec)[:top_k]
+        reranked = await asyncio.to_thread(reranker.rerank, query, fused_chunks, query_vec)
+        reranked = reranked[:top_k]
         trace = RetrievalTrace(
             bm25_ids=bm25_ids[:10],
             vector_ids=vector_ids[:10],
