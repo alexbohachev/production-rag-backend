@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eu
 BASE="${BASE:-http://localhost:8000}"
 KEY="${API_KEY:-dev-key}"
 HDR=(-H "X-API-Key: $KEY")
