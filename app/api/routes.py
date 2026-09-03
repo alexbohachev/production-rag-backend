@@ -1,8 +1,11 @@
+import json
+from pathlib import Path
+
 from fastapi import APIRouter, Depends, Header
 from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
 from starlette.responses import Response
 
-from app.api.deps import api_key, embedder_dep, query_service, settings_dep, store_dep
+from app.api.deps import api_key, container, embedder_dep, query_service, settings_dep, store_dep
 from app.config import Settings
 from app.domain.ports import KnowledgeStore
 from app.embeddings import Embedder
@@ -40,9 +43,15 @@ async def ingest_documents(
     _: str = Depends(api_key),
     idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
 ) -> dict[str, object]:
+    if idempotency_key and idempotency_key in container.idempotency:
+        return container.idempotency[idempotency_key]
     n = await IngestService(store, embedder).ingest(body.documents)
     INGEST_COUNT.inc(n)
-    return {"upserted": n, "idempotency_key": idempotency_key}
+    payload = {"upserted": n, "idempotency_key": idempotency_key, "replayed": False}
+    if idempotency_key:
+        container.idempotency[idempotency_key] = {**payload, "replayed": True}
+        payload["replayed"] = False
+    return payload
 
 
 @router.post("/v1/query", response_model=QueryResponse)
@@ -59,6 +68,17 @@ async def query_documents(
         except Exception:
             QUERY_COUNT.labels("error").inc()
             raise
+
+
+@router.get("/v1/eval/recall-at-5")
+async def recall_at_5(
+    service: QueryService = Depends(query_service),
+    _: str = Depends(api_key),
+) -> dict[str, object]:
+    labels_path = Path(__file__).resolve().parents[2] / "eval" / "labels.json"
+    labels = json.loads(labels_path.read_text(encoding="utf-8"))
+    scores = await service.recall_at_5(labels)
+    return {"metric": "Recall@5", "n_queries": len(labels), "scores": scores, "corpus": "synthetic-ops"}
 
 
 @router.get("/v1/meta")

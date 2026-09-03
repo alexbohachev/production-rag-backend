@@ -3,7 +3,7 @@ from app.schemas import Citation
 from app.textutil import tokenize
 
 
-def extractive_answer(query: str, ranked: list[Chunk]) -> tuple[str, list[Citation], float]:
+def grounded_answer(query: str, ranked: list[Chunk]) -> tuple[str, list[Citation], float]:
     if not ranked:
         return "No supporting documents found.", [], 0.0
 
@@ -22,9 +22,10 @@ def extractive_answer(query: str, ranked: list[Chunk]) -> tuple[str, list[Citati
             )
         )
 
-    lead = ranked[0]
-    answer = f"{lead.title}: {lead.text}"
-    if len(ranked) > 1:
-        answer += f" Related: {ranked[1].title}."
+    lead = citations[0]
+    answer = (
+        f"Based on {lead.title}: {lead.quote} "
+        f"(citations: {', '.join(c.chunk_id for c in citations)})."
+    )
     confidence = min(0.95, 0.45 + citations[0].score)
-    return answer, citations, round(confidence, 3)
+    return answer.strip(), citations, round(confidence, 3)

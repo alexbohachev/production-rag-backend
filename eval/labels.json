@@ -1,0 +1,98 @@
+{
+  "q01": {
+    "query": "When should I water light, fast-draining soil?",
+    "relevant_ids": ["doc-01"]
+  },
+  "q02": {
+    "query": "Why is clay staying wet and how often to irrigate it?",
+    "relevant_ids": ["doc-02"]
+  },
+  "q03": {
+    "query": "Best time window to use NDVI maps for scouting?",
+    "relevant_ids": ["doc-03"]
+  },
+  "q04": {
+    "query": "Cercospora threshold for a fungicide pass on beet",
+    "relevant_ids": ["doc-04"]
+  },
+  "q05": {
+    "query": "Where to mount GPS-tracker SK-12 and which firmware?",
+    "relevant_ids": ["doc-05"]
+  },
+  "q06": {
+    "query": "Target grain moisture to start combining winter wheat",
+    "relevant_ids": ["doc-06"]
+  },
+  "q07": {
+    "query": "Safe humidity and temperature for grain in the barn",
+    "relevant_ids": ["doc-07"]
+  },
+  "q08": {
+    "query": "What spare parts belong in a planter kit?",
+    "relevant_ids": ["doc-08"]
+  },
+  "q09": {
+    "query": "What crop to sow after sunflower to limit Sclerotinia?",
+    "relevant_ids": ["doc-09"]
+  },
+  "q10": {
+    "query": "How to split nitrogen on winter wheat and when?",
+    "relevant_ids": ["doc-10"]
+  },
+  "q11": {
+    "query": "Rules for scout photos that will be accepted",
+    "relevant_ids": ["doc-11"]
+  },
+  "q12": {
+    "query": "How early to book a silo slot for a grain truck?",
+    "relevant_ids": ["doc-12"]
+  },
+  "q13": {
+    "query": "Spray buffer next to a cadastral watercourse",
+    "relevant_ids": ["doc-13"]
+  },
+  "q14": {
+    "query": "Diesel drawn during the night shift procedure",
+    "relevant_ids": ["doc-14"]
+  },
+  "q15": {
+    "query": "Wind and rain limits that cancel spraying",
+    "relevant_ids": ["doc-15"]
+  },
+  "q16": {
+    "query": "When to inoculate soybean and how to store inoculant",
+    "relevant_ids": ["doc-16"]
+  },
+  "q17": {
+    "query": "How fast does maize dry in the field in autumn?",
+    "relevant_ids": ["doc-17"]
+  },
+  "q18": {
+    "query": "Can I use ClickHouse dashboards for gate moisture decisions?",
+    "relevant_ids": ["doc-18"]
+  },
+  "q19": {
+    "query": "What does a stale Redis field status mean?",
+    "relevant_ids": ["doc-19"]
+  },
+  "q20": {
+    "query": "Kafka harvest.loads.v1 duplicate load_id handling",
+    "relevant_ids": ["doc-20"]
+  },
+  "q21": {
+    "query": "RabbitMQ scout job visibility timeout and poison messages",
+    "relevant_ids": ["doc-21"]
+  },
+  "q22": {
+    "query": "Azure Blob retention for scout images",
+    "relevant_ids": ["doc-22"]
+  },
+  "q23": {
+    "query": "LLM JSON schema for spray advice and tool calling limits",
+    "relevant_ids": ["doc-23"]
+  },
+  "q24": {
+    "query": "Why combine BM25 with vector search instead of one of them?",
+    "relevant_ids": ["doc-24"]
+  }
+}

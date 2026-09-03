@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 class Container:
     store: KnowledgeStore = field(default_factory=MemoryStore)
     cache: Cache = field(default_factory=MemoryCache)
+    idempotency: dict[str, dict] = field(default_factory=dict)
     rate: RateLimiter = field(init=False)
     cache_breaker: CircuitBreaker = field(default_factory=CircuitBreaker)
 

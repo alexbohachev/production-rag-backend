@@ -89,6 +89,42 @@ class PgStore(KnowledgeStore):
             result = await conn.execute(text("SELECT COUNT(*) FROM chunks"))
             return int(result.scalar_one())
 
+    async def bm25_ids(self, query: str, k: int) -> list[str]:
+        async with self.engine.connect() as conn:
+            result = await conn.execute(
+                text(
+                    """
+                    SELECT id
+                    FROM chunks
+                    WHERE to_tsvector('english', title || ' ' || text)
+                          @@ plainto_tsquery('english', :q)
+                    ORDER BY ts_rank_cd(
+                        to_tsvector('english', title || ' ' || text),
+                        plainto_tsquery('english', :q)
+                    ) DESC
+                    LIMIT :k
+                    """
+                ),
+                {"q": query, "k": k},
+            )
+            return [row[0] for row in result.all()]
+
+    async def vector_ids(self, query_vec, k: int) -> list[str]:
+        literal = "[" + ",".join(f"{float(x):.7f}" for x in query_vec.tolist()) + "]"
+        async with self.engine.connect() as conn:
+            result = await conn.execute(
+                text(
+                    """
+                    SELECT id
+                    FROM chunks
+                    ORDER BY embedding <=> CAST(:vec AS vector)
+                    LIMIT :k
+                    """
+                ),
+                {"vec": literal, "k": k},
+            )
+            return [row[0] for row in result.all()]
+
 
 def _row_to_chunk(row) -> Chunk:
     raw = row["embedding"]

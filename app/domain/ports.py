@@ -1,4 +1,5 @@
-from app.domain.ranking import Chunk
+from app.domain.ranking import Chunk, bm25_rank, vector_rank
+import numpy as np
 
 
 class KnowledgeStore:
@@ -13,3 +14,9 @@ class KnowledgeStore:
 
     async def count(self) -> int:
         raise NotImplementedError
+
+    async def bm25_ids(self, query: str, k: int) -> list[str]:
+        return bm25_rank(query, await self.all_chunks())[:k]
+
+    async def vector_ids(self, query_vec: np.ndarray, k: int) -> list[str]:
+        return vector_rank(query_vec, await self.all_chunks())[:k]

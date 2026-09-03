@@ -78,3 +78,20 @@ def lexical_rerank(query: str, chunks: list[Chunk]) -> list[Chunk]:
         return len(q & tokens) / len(q)
 
     return sorted(chunks, key=score, reverse=True)
+
+
+def feature_rerank(query: str, chunks: list[Chunk], query_vec: np.ndarray) -> list[Chunk]:
+    """Mix token overlap with cosine — not a cross-encoder."""
+    q = set(tokenize(query))
+    qn = np.linalg.norm(query_vec) or 1.0
+    qv = query_vec.astype(np.float32) / qn
+
+    def score(chunk: Chunk) -> float:
+        tokens = set(tokenize(chunk.title + " " + chunk.text))
+        lex = (len(q & tokens) / len(q)) if q else 0.0
+        emb = np.asarray(chunk.embedding, dtype=np.float32)
+        en = np.linalg.norm(emb) or 1.0
+        cos = float(emb @ qv / en)
+        return 0.55 * lex + 0.45 * max(cos, 0.0)
+
+    return sorted(chunks, key=score, reverse=True)
