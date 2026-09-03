@@ -55,5 +55,7 @@ def test_recall_at_5_endpoint():
         res = client.get("/v1/eval/recall-at-5", headers={"X-API-Key": "dev-key"})
         assert res.status_code == 200
         body = res.json()
-        assert body["n_queries"] == 24
-        assert 0 <= body["scores"]["hybrid"] <= 1
+        assert body["n_queries"] >= 24
+        assert "recall_at_1" in body
+        assert "recall_at_5" in body
+        assert 0 <= body["recall_at_5"]["hybrid"] <= 1

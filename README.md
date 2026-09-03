@@ -32,4 +32,4 @@ copy .env.example .env
 uvicorn app.main:app --reload
 ```
 
-Local default embeddings: MiniLM. Docker/CI: `hash`.
+Дивись **STUDY.md** — як розібрати BM25 vs vector vs hybrid.

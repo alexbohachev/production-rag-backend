@@ -94,5 +94,15 @@
   "q24": {
     "query": "Why combine BM25 with vector search instead of one of them?",
     "relevant_ids": ["doc-24"]
+  },
+  "q25": {
+    "query": "How often should I hydrate rapidly draining fields?",
+    "relevant_ids": ["doc-01"],
+    "lesson": "paraphrase: BM25 should struggle, vector/hybrid should keep doc-01"
+  },
+  "q26": {
+    "query": "GPS-tracker SK-12 firmware 2.4 metal roof",
+    "relevant_ids": ["doc-05"],
+    "lesson": "exact product token: BM25 should win, pure vector may drift to doc-d2"
   }
 }

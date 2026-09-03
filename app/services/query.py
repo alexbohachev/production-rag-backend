@@ -82,21 +82,45 @@ class QueryService:
             response = response.model_copy(update={"retrieval": None})
         return response
 
-    async def recall_at_5(self, labels: dict) -> dict[str, float]:
+    async def recall_at_k(self, labels: dict, k: int = 5) -> dict[str, float]:
         modes = {"bm25": 0.0, "vector": 0.0, "hybrid": 0.0, "reranked": 0.0}
         n = 0
         for row in labels.values():
             query = row["query"]
             relevant = set(row["relevant_ids"])
-            reranked, trace = await self.retrieve(query, 5)
+            reranked, trace = await self.retrieve(query, k)
             n += 1
-            modes["bm25"] += _hit(trace.bm25_ids[:5], relevant)
-            modes["vector"] += _hit(trace.vector_ids[:5], relevant)
-            modes["hybrid"] += _hit(trace.fused_ids[:5], relevant)
-            modes["reranked"] += _hit([c.id for c in reranked][:5], relevant)
+            modes["bm25"] += _hit(trace.bm25_ids[:k], relevant)
+            modes["vector"] += _hit(trace.vector_ids[:k], relevant)
+            modes["hybrid"] += _hit(trace.fused_ids[:k], relevant)
+            modes["reranked"] += _hit([c.id for c in reranked][:k], relevant)
         if not n:
             return modes
-        return {k: round(v / n, 3) for k, v in modes.items()}
+        return {key: round(val / n, 3) for key, val in modes.items()}
+
+    async def evaluate(self, labels: dict) -> dict:
+        """Recall@1 shows ranking quality; Recall@5 is looser (easy to saturate)."""
+        at1 = await self.recall_at_k(labels, 1)
+        at5 = await self.recall_at_k(labels, 5)
+        lessons = []
+        for key, row in labels.items():
+            reranked, trace = await self.retrieve(row["query"], 5)
+            gold = set(row["relevant_ids"])
+            lessons.append(
+                {
+                    "id": key,
+                    "query": row["query"],
+                    "gold": sorted(gold),
+                    "bm25_top1": (trace.bm25_ids[:1] or [None])[0],
+                    "vector_top1": (trace.vector_ids[:1] or [None])[0],
+                    "hybrid_top1": (trace.fused_ids[:1] or [None])[0],
+                    "lesson": row.get("lesson"),
+                }
+            )
+        return {"recall_at_1": at1, "recall_at_5": at5, "n_queries": len(labels), "cases": lessons}
+
+    async def recall_at_5(self, labels: dict) -> dict[str, float]:
+        return await self.recall_at_k(labels, 5)
 
     async def _embed(self, query: str) -> np.ndarray:
         async def _run() -> np.ndarray:

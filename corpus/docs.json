@@ -118,5 +118,25 @@
     "id": "doc-24",
     "title": "Hybrid search vs keyword",
     "text": "Keyword search misses paraphrases such as 'when to water light soil' versus 'irrigation on sandy loam'. Vector search misses exact tokens such as GPS-tracker SK-12 and Cercospora. Hybrid BM25 plus kNN is the default retriever for the knowledge base."
+  },
+  {
+    "id": "doc-d1",
+    "title": "General watering notes",
+    "text": "Plants need water. Always check a calendar before watering. This note is generic and must not outrank sandy-loam irrigation rules."
+  },
+  {
+    "id": "doc-d2",
+    "title": "GPS in the office",
+    "text": "Office phones may use GPS for maps. This is not the SK-12 vehicle tracker and has no metal-roof install rule."
+  },
+  {
+    "id": "doc-d3",
+    "title": "Moisture in the canteen",
+    "text": "Keep the kitchen humidity comfortable for staff. This is not grain barn moisture and not wheat harvest moisture."
+  },
+  {
+    "id": "doc-d4",
+    "title": "Beet recipes",
+    "text": "Beet soup is popular. Cercospora is a plant disease, not a recipe. Do not treat this as a spray threshold."
   }
 ]

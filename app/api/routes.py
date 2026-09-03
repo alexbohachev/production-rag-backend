@@ -77,8 +77,10 @@ async def recall_at_5(
 ) -> dict[str, object]:
     labels_path = Path(__file__).resolve().parents[2] / "eval" / "labels.json"
     labels = json.loads(labels_path.read_text(encoding="utf-8"))
-    scores = await service.recall_at_5(labels)
-    return {"metric": "Recall@5", "n_queries": len(labels), "scores": scores, "corpus": "synthetic-ops"}
+    report = await service.evaluate(labels)
+    report["corpus"] = "synthetic-ops"
+    report["note"] = "Use recall_at_1 to study BM25 vs vector. recall_at_5 saturates on this small set."
+    return report
 
 
 @router.get("/v1/meta")
