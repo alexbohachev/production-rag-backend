@@ -24,6 +24,7 @@ class RetrievalTrace(BaseModel):
     vector_ids: list[str]
     fused_ids: list[str]
     reranked_ids: list[str]
+    rerank_backend: str = "feature"
 
 
 class QueryRequest(BaseModel):

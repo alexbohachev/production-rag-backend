@@ -10,10 +10,11 @@ import numpy as np
 from app.config import Settings
 from app.domain.answer import grounded_answer
 from app.domain.ports import KnowledgeStore
-from app.domain.ranking import feature_rerank, rrf_fuse
+from app.domain.ranking import rrf_fuse
 from app.embeddings import Embedder
 from app.infra.cache import Cache
 from app.infra.resilience import CircuitOpenError, with_timeout
+from app.rerank import get_reranker
 from app.schemas import QueryResponse, RetrievalTrace
 
 logger = logging.getLogger(__name__)
@@ -33,7 +34,7 @@ class QueryService:
         self.settings = settings
 
     def _cache_key(self, query: str, top_k: int) -> str:
-        raw = f"{self.embedder.backend}:{top_k}:{query.strip().lower()}"
+        raw = f"{self.embedder.backend}:{self.settings.rerank_backend}:{top_k}:{query.strip().lower()}"
         return "q:" + hashlib.sha256(raw.encode()).hexdigest()
 
     async def retrieve(
@@ -47,12 +48,14 @@ class QueryService:
         )
         fused = rrf_fuse(bm25_ids, vector_ids)[:retrieve_k]
         fused_chunks = await self.store.get_many(fused)
-        reranked = feature_rerank(query, fused_chunks, query_vec)[:top_k]
+        reranker = get_reranker()
+        reranked = reranker.rerank(query, fused_chunks, query_vec)[:top_k]
         trace = RetrievalTrace(
             bm25_ids=bm25_ids[:10],
             vector_ids=vector_ids[:10],
             fused_ids=fused[:10],
             reranked_ids=[c.id for c in reranked],
+            rerank_backend=reranker.backend,
         )
         return reranked, trace
 
@@ -104,7 +107,7 @@ class QueryService:
         at5 = await self.recall_at_k(labels, 5)
         lessons = []
         for key, row in labels.items():
-            reranked, trace = await self.retrieve(row["query"], 5)
+            _reranked, trace = await self.retrieve(row["query"], 5)
             gold = set(row["relevant_ids"])
             lessons.append(
                 {

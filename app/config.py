@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     database_url: str = ""
     redis_url: str = ""
     embedding_backend: str = "minilm"
+    rerank_backend: str = "cross_encoder"  # feature | cross_encoder
     embedding_dims: int = 384
     retrieve_k: int = 20
     rerank_k: int = 5

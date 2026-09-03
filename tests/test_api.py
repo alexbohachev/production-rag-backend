@@ -1,5 +1,6 @@
-from app.main import create_app
 from fastapi.testclient import TestClient
+
+from app.main import create_app
 
 
 def test_health_is_public():
@@ -59,3 +60,5 @@ def test_recall_at_5_endpoint():
         assert "recall_at_1" in body
         assert "recall_at_5" in body
         assert 0 <= body["recall_at_5"]["hybrid"] <= 1
+        assert "AgriChain" in body["note"]
+        assert body["corpus"] == "synthetic-ops"

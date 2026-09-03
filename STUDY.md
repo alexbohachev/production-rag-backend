@@ -30,6 +30,7 @@ GET /v1/eval/recall-at-5
 | Файл | Навіщо |
 | --- | --- |
 | `app/domain/ranking.py` | BM25, cosine, RRF, feature rerank |
+| `app/rerank.py` | `feature` (CI) або `cross_encoder` MiniLM |
 | `app/services/query.py` | оркестрація: embed → два ретрівери паралельно → fuse → rerank → answer |
 | `app/infra/memory_store.py` | те саме API, що Postgres |
 | `app/infra/pg_store.py` | BM25 = `tsvector`, vector = `<=>` |

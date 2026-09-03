@@ -30,5 +30,6 @@ services:
       DATABASE_URL: postgresql+psycopg://rag:rag@db:5432/rag
       REDIS_URL: redis://redis:6379/0
       EMBEDDING_BACKEND: hash
+      RERANK_BACKEND: feature
     ports:
       - "8000:8000"

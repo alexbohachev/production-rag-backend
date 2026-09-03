@@ -19,3 +19,4 @@ jobs:
       - run: pytest -q
         env:
           EMBEDDING_BACKEND: hash
+          RERANK_BACKEND: feature

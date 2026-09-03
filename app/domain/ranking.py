@@ -4,7 +4,8 @@ Retrieval math used by the API.
 BM25: sparse / exact tokens (IDs, product names).
 Vector: dense / paraphrase.
 RRF: fuse two ranked lists without calibrating scores.
-Feature rerank: mix overlap + cosine on the fused shortlist (not a cross-encoder).
+Feature rerank: mix overlap + cosine on the fused shortlist.
+Cross-encoder (optional): `RERANK_BACKEND=cross_encoder` scores (query, passage) pairs.
 """
 from __future__ import annotations
 

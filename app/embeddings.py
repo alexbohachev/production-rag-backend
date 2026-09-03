@@ -39,9 +39,9 @@ class Embedder:
                 from sentence_transformers import SentenceTransformer
 
                 self._model = SentenceTransformer(MINILM_NAME)
-                dim_fn = getattr(self._model, "get_embedding_dimension", None) or getattr(
-                    self._model, "get_sentence_embedding_dimension"
-                )
+                dim_fn = getattr(self._model, "get_embedding_dimension", None)
+                if dim_fn is None:
+                    dim_fn = self._model.get_sentence_embedding_dimension
                 self.dims = int(dim_fn())
                 logger.info("embeddings: %s (%s dims)", MINILM_NAME, self.dims)
             except Exception:

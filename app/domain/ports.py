@@ -1,5 +1,6 @@
-from app.domain.ranking import Chunk, bm25_rank, vector_rank
 import numpy as np
+
+from app.domain.ranking import Chunk, bm25_rank, vector_rank
 
 
 class KnowledgeStore:

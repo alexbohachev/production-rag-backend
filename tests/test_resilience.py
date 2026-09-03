@@ -1,4 +1,5 @@
 import pytest
+
 from app.infra.resilience import CircuitBreaker, CircuitOpenError, with_timeout
 
 
