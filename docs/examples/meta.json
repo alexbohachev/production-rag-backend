@@ -1,0 +1,6 @@
+{
+  "service": "production-rag-backend",
+  "embedding": "hash",
+  "rerank": "feature",
+  "rerank_configured": "feature"
+}

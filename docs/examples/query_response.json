@@ -1,0 +1,65 @@
+{
+  "answer": "Based on GPS tracker SK-12 install: The GPS-tracker SK-12 must sit on a metal roof with a clear sky view. Do not place it under a plastic tarp. After power-on, wait until the LED blinks green twice before pairing it with the logistics module. Firmware b... (citations: doc-05, doc-24, doc-d2).",
+  "citations": [
+    {
+      "chunk_id": "doc-05",
+      "doc_id": "doc-05",
+      "title": "GPS tracker SK-12 install",
+      "quote": "The GPS-tracker SK-12 must sit on a metal roof with a clear sky view. Do not place it under a plastic tarp. After power-on, wait until the LED blinks green twice before pairing it with the logistics module. Firmware b...",
+      "score": 1.0
+    },
+    {
+      "chunk_id": "doc-24",
+      "doc_id": "doc-24",
+      "title": "Hybrid search vs keyword",
+      "quote": "Keyword search misses paraphrases such as 'when to water light soil' versus 'irrigation on sandy loam'. Vector search misses exact tokens such as GPS-tracker SK-12 and Cercospora. Hybrid BM25 plus kNN is the default r...",
+      "score": 0.38
+    },
+    {
+      "chunk_id": "doc-d2",
+      "doc_id": "doc-d2",
+      "title": "GPS in the office",
+      "quote": "Office phones may use GPS for maps. This is not the SK-12 vehicle tracker and has no metal-roof install rule.",
+      "score": 0.18
+    }
+  ],
+  "confidence": 0.95,
+  "retrieval": {
+    "bm25_ids": [
+      "doc-05",
+      "doc-24",
+      "doc-d2",
+      "doc-12"
+    ],
+    "vector_ids": [
+      "doc-05",
+      "doc-07",
+      "doc-16",
+      "doc-24",
+      "doc-10",
+      "doc-d2",
+      "doc-03",
+      "doc-15",
+      "doc-02",
+      "doc-12"
+    ],
+    "fused_ids": [
+      "doc-05",
+      "doc-24",
+      "doc-d2",
+      "doc-12",
+      "doc-07",
+      "doc-16",
+      "doc-10",
+      "doc-03",
+      "doc-15",
+      "doc-02"
+    ],
+    "reranked_ids": [
+      "doc-05",
+      "doc-24",
+      "doc-d2"
+    ],
+    "rerank_backend": "feature"
+  }
+}

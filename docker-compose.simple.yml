@@ -1,0 +1,9 @@
+services:
+  api:
+    build: .
+    environment:
+      API_KEYS: dev-key
+      EMBEDDING_BACKEND: hash
+      RERANK_BACKEND: feature
+    ports:
+      - "8000:8000"
